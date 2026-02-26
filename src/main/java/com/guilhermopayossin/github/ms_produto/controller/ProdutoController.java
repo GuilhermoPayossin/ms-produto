@@ -1,15 +1,15 @@
 package com.guilhermopayossin.github.ms_produto.controller;
 
 import com.guilhermopayossin.github.ms_produto.dto.ProdutoDTO;
+import com.guilhermopayossin.github.ms_produto.enities.Produto;
 import com.guilhermopayossin.github.ms_produto.services.ProdutoService;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -31,4 +31,29 @@ public class ProdutoController {
         return ResponseEntity.ok(produtoDTO);
     }
 
+    @PostMapping
+    public ResponseEntity<ProdutoDTO> createProduto(@RequestBody ProdutoDTO produtoDTO) {
+        produtoDTO = produtoService.saveProduto(produtoDTO);
+
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequestUri()
+                .path("/{id}")
+                .buildAndExpand(produtoDTO.getId())
+                .toUri();
+
+        return ResponseEntity.created(uri).body(produtoDTO);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProdutoDTO> updateProduto(@PathVariable Long id,
+                                                    @RequestBody ProdutoDTO produtoDto) {
+        produtoDto = produtoService.updateProduto(id, produtoDto);
+        return ResponseEntity.ok(produtoDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduto(@PathVariable Long id){
+        produtoService.deleteProdutoById(id);
+        return ResponseEntity.noContent().build();
+    }
 }
