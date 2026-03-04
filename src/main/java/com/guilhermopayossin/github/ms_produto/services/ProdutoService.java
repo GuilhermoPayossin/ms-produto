@@ -2,6 +2,7 @@ package com.guilhermopayossin.github.ms_produto.services;
 
 import com.guilhermopayossin.github.ms_produto.dto.ProdutoDTO;
 import com.guilhermopayossin.github.ms_produto.enities.Produto;
+import com.guilhermopayossin.github.ms_produto.exeptions.ResourceNotFoundException;
 import com.guilhermopayossin.github.ms_produto.repository.ProdutoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class ProdutoService {
     @Transactional(readOnly = true)
     public ProdutoDTO findProdutoById(Long id) {
         Produto produto = produtoRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Recurso não encontrado: ID - " + id)
+                () -> new ResourceNotFoundException("Recurso não encontrado: ID - " + id)
         );
         return new ProdutoDTO(produto);
     }
@@ -46,14 +47,14 @@ public class ProdutoService {
             produto = produtoRepository.save(produto);
             return new ProdutoDTO(produto);
         } catch (EntityNotFoundException e) {
-            throw new EntityNotFoundException("Recurso não encontrado: ID - " + id);
+            throw new ResourceNotFoundException("Recurso não encontrado: ID - " + id);
         }
     }
 
     @Transactional
     public void deleteProdutoById(Long id) {
         if(!produtoRepository.existsById(id)) {
-            throw new EntityNotFoundException("Recurso não encontrado: ID - "+ id);
+            throw new ResourceNotFoundException("Recurso não encontrado: ID - "+ id);
         }
         produtoRepository.deleteById(id);
     }
